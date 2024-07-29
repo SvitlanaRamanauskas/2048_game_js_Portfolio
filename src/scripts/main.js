@@ -224,6 +224,10 @@ function moveDown() {
 }
 
 function setTwo() {
+  if(!hasEmptyCell()) {
+    return;
+  }
+
   let found = false;
 
   const value = Math.random() < 0.9 ? 2 : 4;
@@ -259,10 +263,10 @@ function hasEmptyCell() {
 function hasPossibleMoves() {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < columns; c++) {
-      if (r > 0 && field[r][c] === field[r - 1][c]) return true; // Check above
-      if (r < rows - 1 && field[r][c] === field[r + 1][c]) return true; // Check below
-      if (c > 0 && field[r][c] === field[r][c - 1]) return true; // Check left
-      if (c < columns - 1 && field[r][c] === field[r][c + 1]) return true; // Check right
+      if (r > 0 && field[r][c] === field[r - 1][c]) return true;
+      if (r < rows - 1 && field[r][c] === field[r + 1][c]) return true;
+      if (c > 0 && field[r][c] === field[r][c - 1]) return true;
+      if (c < columns - 1 && field[r][c] === field[r][c + 1]) return true;
     }
   }
 
