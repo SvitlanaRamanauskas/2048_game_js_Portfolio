@@ -8,6 +8,7 @@ const page = document.querySelector('.container');
 const startButton = document.getElementById('start');
 let gameStarted = false;
 let gameOver = false;
+let moved = false;
 
 startButton.addEventListener('click', function() {
   if (startButton.classList.contains('start')) {
@@ -99,8 +100,12 @@ function updateCell(cell, num) {
 }
 
 document.addEventListener('keyup', (element) => {
-  if(gameOver) return;
-  
+  if (!hasEmptyCell() && !hasPossibleMoves()) {
+    gameOver = true;
+    messageGameOver();
+    return
+  }
+
   switch (element.code) {
     case 'ArrowLeft':
       moveLeft();
@@ -148,12 +153,12 @@ function move(row) {
 }
 
 function moveLeft() {
+
   for (let r = 0; r < rows; r++) {
     let row = field[r];
-
     row = move(row);
-    field[r] = row;
 
+    field[r] = row;
     for (let c = 0; c < columns; c++) {
       const cell = document.getElementById(r.toString() + '-' + c.toString());
       const num = field[r][c];
@@ -169,6 +174,7 @@ function moveRight() {
 
     row.reverse();
     row = move(row);
+
     field[r] = row.reverse();
 
     for (let c = 0; c < columns; c++) {
@@ -183,7 +189,6 @@ function moveRight() {
 function moveUp() {
   for (let c = 0; c < columns; c++) {
     let row = [field[0][c], field[1][c], field[2][c], field[3][c]];
-
     row = move(row);
 
     for (let r = 0; r < rows; r++) {
@@ -202,7 +207,9 @@ function moveDown() {
     let row = [field[0][c], field[1][c], field[2][c], field[3][c]];
 
     row.reverse();
+
     row = move(row);
+
     row.reverse();
 
     for (let r = 0; r < rows; r++) {
@@ -216,24 +223,7 @@ function moveDown() {
   }
 }
 
-function messageGameOver() {
-  const messageLose = page.querySelector('.message-lose');
-
-  messageLose.classList.remove('hidden');
-}
-
-function messageWin() {
-  const winningMessage = page.querySelector('.message-win');
-
-  winningMessage.classList.remove('hidden');
-}
-
 function setTwo() {
-  if (!hasEmptyCell()) {
-    gameOver = true;
-    return messageGameOver();
-  }
-
   let found = false;
 
   const value = Math.random() < 0.9 ? 2 : 4;
@@ -265,3 +255,29 @@ function hasEmptyCell() {
 
   return false;
 }
+
+function hasPossibleMoves() {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < columns; c++) {
+      if (r > 0 && field[r][c] === field[r - 1][c]) return true; // Check above
+      if (r < rows - 1 && field[r][c] === field[r + 1][c]) return true; // Check below
+      if (c > 0 && field[r][c] === field[r][c - 1]) return true; // Check left
+      if (c < columns - 1 && field[r][c] === field[r][c + 1]) return true; // Check right
+    }
+  }
+
+  return false;
+}
+
+function messageGameOver() {
+  const messageLose = page.querySelector('.message-lose');
+
+  messageLose.classList.remove('hidden');
+}
+
+function messageWin() {
+  const winningMessage = page.querySelector('.message-win');
+
+  winningMessage.classList.remove('hidden');
+}
+
